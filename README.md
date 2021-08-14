@@ -9,6 +9,8 @@ The purpose of this script is to provide a simple way to view qr codes from mega
 5. Wait for the picture to be processed(You'll see a spinning thing in the bottom left). This may take a few seconds
 6. A dialog box should pop up saying a qr code was found in the provided image. Depending on the qr code, it will ask if you want to see the contents or perform an action based on the contents. 
 
+NOTE: if you say yes to performing an action related to the qr code, it will delete the image, as presumably it's not needed anymore. If you guys disagree with this functionality let me know.
+
 # Installation Instructions
 1. First you will need to install the following via apt-get:
 ```
