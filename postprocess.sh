@@ -61,7 +61,7 @@ function qr_code {
 
     # If no qr code found, then just exit
     if [[ -z "$QR_CODE" ]]; then
-        echo "QR Code not found... exiting"
+        #echo "QR Code not found... exiting"
         exit 0
     fi
 
