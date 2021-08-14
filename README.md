@@ -18,10 +18,10 @@ sudo apt-get install megapixels zenity zbar-tools
 ```
 mkdir -p ~purism/.config/megapixels
 ```
-3. Download the postprocess script from https://raw.githubusercontent.com/steve5289/megapixels_qr_code_postprocess/main/postprocess.sh, and place it in the ~purism/.config/megapixels/ keeping the name postprocess.sh
+3. Download the postprocess script from https://raw.githubusercontent.com/steve5289/megapixels-qrcode-postprocess/master/postprocess.sh, and place it in the ~purism/.config/megapixels/ keeping the name postprocess.sh
 ```
 cd ~purism/.config/megapixels/
-wget https://raw.githubusercontent.com/steve5289/megapixels_qr_code_postprocess/main/postprocess.sh
+wget https://raw.githubusercontent.com/steve5289/megapixels-qrcode-postprocess/master/postprocess.sh
 ```
 4. Set the permissions on the script to 755 (basically make it executable)
 ```
