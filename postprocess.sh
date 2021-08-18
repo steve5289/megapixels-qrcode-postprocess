@@ -129,7 +129,7 @@ function qr_code_launch {
             local RAW=( $(echo "$QR_CODE" | sed 's/^smsto://') )
             IFS=$' \t\n'
             local TEL="${RAW[0]}"
-            local MESS="${RAW[1]}"
+            local MESS=$(printf ":%s" "${RAW[@]:1}" | sed 's/^://')
             prompt_yn "This image contains a qr code that wants you to send a sms message to a number. Would you like to see it?" || exit 0
             new_tempfile "smsinfo" ".txt"
             TMPFILE="$OUTPUT"
