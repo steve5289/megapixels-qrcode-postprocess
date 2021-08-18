@@ -84,18 +84,18 @@ function qr_code_check_deps {
 # Depending on the type of qr code perform different actions. Always ask the user before doing anything.
 function qr_code_launch {
     local QR_CODE="$1"
-    local SPLIT PREFIX
+    local SPLIT PREFIX DATA RAW
 
     IFS=$':'
     SPLIT=( $QR_CODE )
     IFS=$' \t\n'
     PREFIX="${SPLIT[0],,}"
+    DATA=$(echo "$QR_CODE" | sed -e 's|^[a-Z]*:||' | sed 's|^//||')
 
     case $PREFIX in
         # EMAIL
         mailto)
-            local EMAIL=$(echo "" | sed 's/^mailto://')
-            prompt_yn "This image contains a qr code to send an email to $EMAIL. Would you like to send an email to them?" || exit 0
+            prompt_yn "This image contains a qr code to send an email to '$DATA'. Would you like to send an email to them?" || exit 0
 
             xdg-open "$QR_CODE"
         ;;
@@ -106,7 +106,7 @@ function qr_code_launch {
 
             new_tempfile "contact" ".txt"
             TMPFILE="$OUTPUT"
-            echo "$QR_CODE" | sed 's/^MECARD://' | sed 's/;/\n/g' > "$TMPFILE"
+            echo "$DATA" | sed 's/;/\n/g' > "$TMPFILE"
             xdg-open "$TMPFILE"
         ;;
 
@@ -118,18 +118,19 @@ function qr_code_launch {
 
         # TELEPHONE NUMBER
         tel)
-            local TEL=$(echo "$QR_CODE" | sed 's/^tel://')
-            prompt_yn "This image contains a qr code for the telephone numer '$TEL'. Would you like to call it?" || exit 0
+            prompt_yn "This image contains a qr code for the telephone numer '$DATA'. Would you like to call it?" || exit 0
             xdg-open "$QR_CODE"
         ;;
 
         # SMS NUMBER
         smsto)
             IFS=$':'
-            local RAW=( $(echo "$QR_CODE" | sed 's/^smsto://') )
+            RAW=( $DATA )
             IFS=$' \t\n'
+
             local TEL="${RAW[0]}"
-            local MESS=$(printf ":%s" "${RAW[@]:1}" | sed 's/^://')
+            local MESS=$(echo "$DATA" | sed 's|^[0-9]*:||')
+
             prompt_yn "This image contains a qr code that wants you to send a sms message to a number. Would you like to see it?" || exit 0
             new_tempfile "smsinfo" ".txt"
             TMPFILE="$OUTPUT"
@@ -141,7 +142,6 @@ function qr_code_launch {
         http|https)
             prompt_yn "This image contains the URL '$QR_CODE'. Would you like to open this in the web broswer?" || exit 0
             xdg-open "$QR_CODE"
-
         ;;
 
         # Anything else
