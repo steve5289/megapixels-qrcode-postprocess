@@ -82,62 +82,73 @@ function qr_code_check_deps {
 # Depending on the type of qr code perform different actions. Always ask the user before doing anything.
 function qr_code_launch {
     local QR_CODE="$1"
+    local SPLIT PREFIX
 
-    # EMAIL
-    if [[ "$QR_CODE" = mailto:* ]]; then
-        local EMAIL=$(echo "" | sed 's/^mailto://')
-        prompt_yn "This image contains a qr code to send an email to $EMAIL. Would you like to send an email to them?" || exit 0
+    IFS=$':'
+    SPLIT=( $QR_CODE )
+    IFS=$' \t\n'
+    PREFIX="${SPLIT[0],,}"
 
-        xdg-open "$QR_CODE"
+    case $PREFIX in
+        # EMAIL
+        mailto)
+            local EMAIL=$(echo "" | sed 's/^mailto://')
+            prompt_yn "This image contains a qr code to send an email to $EMAIL. Would you like to send an email to them?" || exit 0
 
-    # CONTACT INFO
-    elif [[ "$QR_CODE" = MECARD:* ]] ; then
-        prompt_yn "This image contains a qr code for contact information for someone. See text information?" || exit 0
+            xdg-open "$QR_CODE"
+        ;;
+        # CONTACT INFO
+        mecard)
+            prompt_yn "This image contains a qr code for contact information for someone. See text information?" || exit 0
 
-        new_tempfile "contact" ".txt"
-        TMPFILE="$OUTPUT"
-        echo "$QR_CODE" | sed 's/^MECARD://' | sed 's/;/\n/g' > "$TMPFILE"
-        xdg-open "$TMPFILE"
+            new_tempfile "contact" ".txt"
+            TMPFILE="$OUTPUT"
+            echo "$QR_CODE" | sed 's/^MECARD://' | sed 's/;/\n/g' > "$TMPFILE"
+            xdg-open "$TMPFILE"
+        ;;
 
-    # GEO LOCATION
-    elif [[ "$QR_CODE" = geo:* ]] ; then
-        prompt_yn "This image contains a qr code for geo location. Open in map?" || exit 0
-        xdg-open "$QR_CODE"
+        # GEO LOCATION
+        geo)
+            prompt_yn "This image contains a qr code for geo location. Open in map?" || exit 0
+            xdg-open "$QR_CODE"
+        ;;
 
-    # TELEPHONE NUMBER
-    elif [[ "$QR_CODE" = tel:* ]] ; then
-        local TEL=$(echo "$QR_CODE" | sed 's/^tel://')
-        prompt_yn "This image contains a qr code for the telephone numer '$TEL'. Would you like to call it?" || exit 0
-        xdg-open "$QR_CODE"
+        # TELEPHONE NUMBER
+        tel)
+            local TEL=$(echo "$QR_CODE" | sed 's/^tel://')
+            prompt_yn "This image contains a qr code for the telephone numer '$TEL'. Would you like to call it?" || exit 0
+            xdg-open "$QR_CODE"
+        ;;
 
-    # SMS NUMBER
-    elif [[ "$QR_CODE" = smsto:* ]] ; then
-        IFS=$':'
-        local RAW=( $(echo "$QR_CODE" | sed 's/^smsto://') )
-        IFS=$' \t\n'
-        local TEL="${RAW[0]}"
-        local MESS="${RAW[1]}"
-        prompt_yn "This image contains a qr code that wants you to send a sms message to a number. Would you like to see it?" || exit 0
-        new_tempfile "smsinfo" ".txt"
-        TMPFILE="$OUTPUT"
-        echo -e "Phone Number: $TEL\nMessage to send to it: '$MESS'" > "$TMPFILE"
-        xdg-open "$TMPFILE"
-        
+        # SMS NUMBER
+        smsto)
+            IFS=$':'
+            local RAW=( $(echo "$QR_CODE" | sed 's/^smsto://') )
+            IFS=$' \t\n'
+            local TEL="${RAW[0]}"
+            local MESS="${RAW[1]}"
+            prompt_yn "This image contains a qr code that wants you to send a sms message to a number. Would you like to see it?" || exit 0
+            new_tempfile "smsinfo" ".txt"
+            TMPFILE="$OUTPUT"
+            echo -e "Phone Number: $TEL\nMessage to send to it: '$MESS'" > "$TMPFILE"
+            xdg-open "$TMPFILE"
+        ;;
 
-    # URL
-    elif [[ "$QR_CODE" = http*://* ]] ; then
-        prompt_yn "This image contains the URL '$QR_CODE'. Would you like to open this in the web broswer?" || exit 0
-        xdg-open "$QR_CODE"
+        # URL
+        http|https)
+            prompt_yn "This image contains the URL '$QR_CODE'. Would you like to open this in the web broswer?" || exit 0
+            xdg-open "$QR_CODE"
 
-    # Anything else
-    else
-        prompt_yn "This image contains unknown information. Would you like to see the raw text?" || exit 0
+        # Anything else
+        *)
+            prompt_yn "This image contains unknown information. Would you like to see the raw text?" || exit 0
 
-        new_tempfile "qrcode" ".txt"
-        TMPFILE="$OUTPUT"
-        echo "$QR_CODE" > "$TMPFILE"
-        xdg-open "$TMPFILE"
-    fi
+            new_tempfile "qrcode" ".txt"
+            TMPFILE="$OUTPUT"
+            echo "$QR_CODE" > "$TMPFILE"
+            xdg-open "$TMPFILE"
+        ;;
+    esac
 
 }
 
