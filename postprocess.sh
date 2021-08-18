@@ -99,6 +99,7 @@ function qr_code_launch {
 
             xdg-open "$QR_CODE"
         ;;
+
         # CONTACT INFO
         mecard)
             prompt_yn "This image contains a qr code for contact information for someone. See text information?" || exit 0
@@ -140,6 +141,8 @@ function qr_code_launch {
         http|https)
             prompt_yn "This image contains the URL '$QR_CODE'. Would you like to open this in the web broswer?" || exit 0
             xdg-open "$QR_CODE"
+
+        ;;
 
         # Anything else
         *)
