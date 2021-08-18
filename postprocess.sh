@@ -6,7 +6,6 @@
 CLEAN_DNG_FILE=1
 STOCK_POSTPROCESS_PATH="/usr/share/megapixels/postprocess.sh"
 
-exec > ~/.config/megapixels/postprocess.log 2>&1
 
 ## 
 # Execution Starts here
@@ -18,6 +17,7 @@ function main {
 
     run_stock_postprocess "$@"
 
+    exec > ~/.config/megapixels/postprocess.log 2>&1
     get_image_file "$IMAGE_NAME"
     if [[ -n "$OUTPUT" ]]; then
         IMAGE_FILE="$OUTPUT"
