@@ -59,7 +59,7 @@ function qr_code {
     
     qr_code_check_deps || die "Error dependancies not met for qr code scanning"
 
-    QR_CODE=$(zbarimg -q "$IMAGE_FILE" | sed 's/^QR-Code://')
+    QR_CODE=$(zbarimg -q --raw "$IMAGE_FILE")
 
     # If no qr code found, then just exit
     if [[ -z "$QR_CODE" ]]; then
