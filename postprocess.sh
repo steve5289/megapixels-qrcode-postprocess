@@ -6,6 +6,8 @@
 CLEAN_DNG_FILE=1
 STOCK_POSTPROCESS_PATH="/usr/share/megapixels/postprocess.sh"
 
+exec > ~/.config/megapixels/postprocess.log 2>&1
+
 ## 
 # Execution Starts here
 function main {
