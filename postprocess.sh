@@ -90,7 +90,7 @@ function qr_code_launch {
     SPLIT=( $QR_CODE )
     IFS=$' \t\n'
     PREFIX="${SPLIT[0],,}"
-    DATA=$(echo "$QR_CODE" | sed -e '0,/^[a-Z]*:/s///' | sed '0,/^\/\//s///')
+    DATA=$(echo "$QR_CODE" | sed -e '0,/^[a-zA-Z]*:/s///' | sed '0,/^\/\//s///')
 
     case $PREFIX in
         # EMAIL
