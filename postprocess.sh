@@ -90,7 +90,7 @@ function qr_code_launch {
     SPLIT=( $QR_CODE )
     IFS=$' \t\n'
     PREFIX="${SPLIT[0],,}"
-    DATA=$(echo "$QR_CODE" | sed -e 's|^[a-Z]*:||' | sed 's|^//||')
+    DATA=$(echo "$QR_CODE" | sed -e '0,/^[a-Z]*:/s///' | sed '0,/^\/\//s///')
 
     case $PREFIX in
         # EMAIL
@@ -129,7 +129,7 @@ function qr_code_launch {
             IFS=$' \t\n'
 
             local TEL="${RAW[0]}"
-            local MESS=$(echo "$DATA" | sed 's|^[0-9]*:||')
+            local MESS=$(echo "$DATA" | sed '0,/^[0-9]*:/s///')
 
             prompt_yn "This image contains a qr code that wants you to send a sms message to a number. Would you like to see it?" || exit 0
             new_tempfile "smsinfo" ".txt"
